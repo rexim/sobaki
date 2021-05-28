@@ -42,7 +42,7 @@ with ThreadPoolExecutor(max_workers=100) as executor:
                 if event.key == pygame.K_s:
                     scroll_y -= scroll_step
                 elif event.key == pygame.K_w:
-                    scroll_y += scroll_step
+                    scroll_y = min(scroll_y + scroll_step, 0)
 
         w, h = screen.get_size()
 

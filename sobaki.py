@@ -36,6 +36,7 @@ with ThreadPoolExecutor(max_workers=100) as executor:
     scroll_dy = 0
     scroll_step = 10000.0
     last_ticks = pygame.time.get_ticks()
+    sensitivity = 500.0
 
     hold_pos = None
     while running:
@@ -47,10 +48,12 @@ with ThreadPoolExecutor(max_workers=100) as executor:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                hold_pos = event.pos
+                if event.button == 1:
+                    hold_pos = event.pos
             elif event.type == pygame.MOUSEBUTTONUP:
-                hold_pos = None
-                scroll_dy *= -300.0
+                if event.button == 1:
+                    hold_pos = None
+                    scroll_dy *= -sensitivity
             elif event.type == pygame.MOUSEMOTION:
                 if hold_pos is not None:
                     scroll_dy = event.pos[1] - hold_pos[1]

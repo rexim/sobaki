@@ -21,12 +21,11 @@ class DoggoImage:
     def __init__(self, executor):
         self.future = executor.submit(fetch_random_dogo_image)
 
-    def render(self, screen, pos):
+    def image(self):
         image = loading_image
         if self.future.done():
             image = self.future.result()
-        screen.blit(image, pos)
-        return image.get_height()
+        return image
 
 pygame.init()
 
@@ -45,11 +44,20 @@ with ThreadPoolExecutor(max_workers=100) as executor:
                 elif event.key == pygame.K_w:
                     scroll_y += scroll_step
 
+        w, h = screen.get_size()
+
         screen.fill((255, 255, 255))
 
         y = scroll_y
         for doggo in doggos:
-            y += doggo.render(screen, (0, y))
+            if y >= h: break
+
+            image = doggo.image()
+
+            if y + image.get_height() >= 0:
+                screen.blit(image, (0, y))
+
+            y += image.get_height()
 
         pygame.display.flip()
 

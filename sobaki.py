@@ -30,7 +30,7 @@ class DoggoImage:
 pygame.init()
 
 with ThreadPoolExecutor(max_workers=100) as executor:
-    doggos = [DoggoImage(executor) for i in range(10)]
+    doggos = []
     running = True
     scroll_y = 0
     scroll_step = 100
@@ -58,6 +58,9 @@ with ThreadPoolExecutor(max_workers=100) as executor:
                 screen.blit(image, (0, y))
 
             y += image.get_height()
+
+        if y < h:
+            doggos.append(DoggoImage(executor))
 
         pygame.display.flip()
 

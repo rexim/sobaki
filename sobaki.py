@@ -33,16 +33,35 @@ with ThreadPoolExecutor(max_workers=100) as executor:
     doggos = []
     running = True
     scroll_y = 0
-    scroll_step = 100
+    scroll_dy = 0
+    scroll_step = 10000.0
+    last_ticks = pygame.time.get_ticks()
+
+    hold_pos = None
     while running:
+        t = pygame.time.get_ticks()
+        delta_time = (last_ticks - t) / 1000.0
+        last_ticks = t
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:
-                    scroll_y -= scroll_step
-                elif event.key == pygame.K_w:
-                    scroll_y = min(scroll_y + scroll_step, 0)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                hold_pos = event.pos
+            elif event.type == pygame.MOUSEBUTTONUP:
+                hold_pos = None
+                scroll_dy *= -300.0
+            elif event.type == pygame.MOUSEMOTION:
+                if hold_pos is not None:
+                    scroll_dy = event.pos[1] - hold_pos[1]
+                    scroll_y += scroll_dy
+                    hold_pos = event.pos
+
+        if hold_pos is None:
+            scroll_y = scroll_y + scroll_dy * delta_time
+            scroll_dy = scroll_dy * 0.95
+            if abs(scroll_dy) < 0.001:
+                scroll_dy = 0.0
 
         w, h = screen.get_size()
 
